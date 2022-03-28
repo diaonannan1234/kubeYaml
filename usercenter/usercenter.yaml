@@ -1,0 +1,28 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: user-center-cm
+  namespace: demo-project
+data:
+  SERVER_PORT: "8090"
+  DB_DRIVER_CLASS_NAME: "org.h2.Driver"
+  DB_URL: "jdbc:h2:mem:usercenter"
+  DB_PLATFORM: "org.hibernate.dialect.H2Dialect"
+  JPA_SHOW_SQL: false
+  H2_CONSOLE_ENABLED: true
+  DB_USERNAME: "duwei"
+  DB_PASSWORD: "duwei"
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  name: user-center-po
+  namespace: demo-project
+spec:
+  containers:
+  - image: duweiduwais/usercenter:v1.0.0
+    name: user-center
+    envFrom:
+    - configMapRef:
+        name: user-center-cm
+        optional: false
