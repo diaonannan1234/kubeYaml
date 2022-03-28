@@ -3,14 +3,10 @@ kind: ConfigMap
 metadata:
   name: user-center-cm
 data:
-  SERVER_PORT: "8090"
-  DB_DRIVER_CLASS_NAME: "org.h2.Driver"
-  DB_URL: "jdbc:h2:mem:usercenter"
-  DB_PLATFORM: "org.hibernate.dialect.H2Dialect"
-  JPA_SHOW_SQL: false
-  H2_CONSOLE_ENABLED: true
-  DB_USERNAME: "duwei"
-  DB_PASSWORD: "duwei"
+  serverPort: "8090"
+  jpaShowSql: false
+  dbUserName: "duwei"
+  dbPassWord: "duwei"
 ---
 
 apiVersion: apps/v1
@@ -30,9 +26,29 @@ spec:
       containers:
       - name: user-center
         image: duweiduwais/usercenter:v1.0.0
-        envFrom:
-        - configMapRef:
-          name: user-center-cm
-          optional: false
+        command: [ "/bin/sh", "-c", "env" ]
+        env:
+        # 定义环境变量
+        - name: SERVER_PORT
+          valueFrom:
+            configMapKeyRef:
+              name: user-center-cm
+              key:serverPort
+        - name: JPA_SHOW_SQL
+          valueFrom:
+            configMapKeyRef:
+              name: user-center-cm
+              key:jpaShowSql
+        - name: DB_USERNAME
+          valueFrom:
+            configMapKeyRef:
+              name: user-center-cm
+              key:dbUserName
+        - name: DB_PASSWORD
+          valueFrom:
+            configMapKeyRef:
+              name: user-center-cm
+              key:dbPassWord
+         restartPolicy: Never 
         
 
