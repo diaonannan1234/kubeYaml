@@ -2,7 +2,6 @@ apiVersion: v1
 kind: ConfigMap
 metadata:
   name: user-center-cm
-  namespace: demo-project
 data:
   SERVER_PORT: "8090"
   DB_DRIVER_CLASS_NAME: "org.h2.Driver"
@@ -13,16 +12,27 @@ data:
   DB_USERNAME: "duwei"
   DB_PASSWORD: "duwei"
 ---
-apiVersion: v1
-kind: Pod
+
+apiVersion: apps/v1
+kind: Deployment
 metadata:
-  name: user-center-po
-  namespace: demo-project
+  name: user-center
 spec:
-  containers:
-  - image: duweiduwais/usercenter:v1.0.0
-    name: user-center
-    envFrom:
-    - configMapRef:
-        name: user-center-cm
-        optional: false
+  selector:
+    matchLabels:
+      app: userCenter
+  replicas: 1 
+  template:
+    metadata:
+      labels:
+        app: userCenter
+    spec:
+      containers:
+      - name: user-center
+        image: duweiduwais/usercenter:v1.0.0
+        envFrom:
+        - configMapRef:
+          name: user-center-cm
+          optional: false
+        
+
